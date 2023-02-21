@@ -3,9 +3,9 @@ package com.example.demo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 public class MyController {
@@ -18,17 +18,13 @@ public class MyController {
 
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-        // Проверяем, есть ли пользователь в Map-е
         if (!list_users.containsKey(username)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The username or password you entered is incorrect");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        // Проверяем, соответствует ли пароль
         if (!(list_users.get(username).equals(password))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The username or password you entered is incorrect");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        // Авторизация прошла успешно
-        return ResponseEntity.ok("Authorization was successful");
+        String randomString = UUID.randomUUID().toString();
+        return ResponseEntity.ok(randomString);
     }
 }
