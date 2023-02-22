@@ -13,32 +13,32 @@ import java.util.UUID;
 
 @RestController
 public class MyController {
-    public static Map<String, String> listUsers;
+    public static Map<String, String> users;
     static {
-        listUsers = new HashMap<>();
-        listUsers.put("user1", "password1");
-        listUsers.put("user2", "password2");
+        users = new HashMap<>();
+        users.put("user1", "password1");
+        users.put("user2", "password2");
     }
-    static Map<String, User> listUsersWhoHaveToken;
+    static Map<String, User> usersWhoHaveToken;
     static {
-        listUsersWhoHaveToken = new HashMap<>();
+        usersWhoHaveToken = new HashMap<>();
     }
 
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-        if (!listUsers.containsKey(username)) {
+        if (!users.containsKey(username)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (!(listUsers.get(username).equals(password))) {
+        if (!(users.get(username).equals(password))) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token;
-        if (listUsersWhoHaveToken.containsKey(username)) {
-            token = listUsersWhoHaveToken.get(username).getToken();
+        if (usersWhoHaveToken.containsKey(username)) {
+            token = usersWhoHaveToken.get(username).getToken();
         } else {
             token = UUID.randomUUID().toString();
             User user = new User(username, token);
-            listUsersWhoHaveToken.put(username, user);
+            usersWhoHaveToken.put(username, user);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,
                     null, new ArrayList<>()));
         }
