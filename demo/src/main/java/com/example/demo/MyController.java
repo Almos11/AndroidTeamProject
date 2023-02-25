@@ -13,12 +13,12 @@ import java.util.UUID;
 
 @RestController
 public class MyController {
-    public static Map<String, String> users;
-    static {
+    public static Map<String, String> users = new HashMap<>();
+    /*static {
         users = new HashMap<>();
         users.put("user1", "password1");
         users.put("user2", "password2");
-    }
+    }*/
     static Map<String, User> usersWhoHaveToken;
     static {
         usersWhoHaveToken = new HashMap<>();
@@ -43,6 +43,15 @@ public class MyController {
                     null, new ArrayList<>()));
         }
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestParam String username, @RequestParam String password) {
+        if (users.containsKey(username)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+        }
+        users.put(username, password);
+        return ResponseEntity.ok("User registered successfully");
     }
 
 }
