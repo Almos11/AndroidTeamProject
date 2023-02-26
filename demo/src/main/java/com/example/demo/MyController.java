@@ -1,5 +1,9 @@
 package com.example.demo;
 
+import com.example.demo.models.UserDataBase;
+import com.example.demo.repo.UserDataBaseRepository;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,12 +17,9 @@ import java.util.UUID;
 
 @RestController
 public class MyController {
-    public static Map<String, String> users;
-    static {
-        users = new HashMap<>();
-        users.put("user1", "password1");
-        users.put("user2", "password2");
-    }
+
+    private UserDataBaseRepository userDataBaseRepository;
+    private UserService userService;
     static Map<String, User> usersWhoHaveToken;
     static {
         usersWhoHaveToken = new HashMap<>();
@@ -26,31 +27,21 @@ public class MyController {
 
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-        if (!users.containsKey(username)) {
+        UserDataBase user = userDataBaseRepository.findByUsername(username);
+        if (user == null || !user.getPassword().equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (!(users.get(username).equals(password))) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        String token;
-        if (usersWhoHaveToken.containsKey(username)) {
-            token = usersWhoHaveToken.get(username).getToken();
-        } else {
-            token = UUID.randomUUID().toString();
-            User user = new User(username, token);
-            usersWhoHaveToken.put(username, user);
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,
-                    null, new ArrayList<>()));
-        }
+        String token = UUID.randomUUID().toString();
+        user.setToken(token);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestParam String username, @RequestParam String password) {
-        if (users.containsKey(username)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
-        }
-        users.put(username, password);
+    public ResponseEntity<String> register(@RequestBody String username, @RequestBody String password) {
+        UserDataBase user = new UserDataBase();
+        user.setUsername(username);
+        user.setPassword(password);
+        userService.saveUser(user);
         return ResponseEntity.ok("User registered successfully");
     }
 
