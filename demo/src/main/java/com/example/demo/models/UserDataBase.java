@@ -6,10 +6,11 @@ import jakarta.persistence.*;
 @Entity
 public class UserDataBase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "usrename")
+    @Column(name = "username")
     private String username;
 
     @Column(name = "password")

@@ -13,12 +13,12 @@ import java.util.UUID;
 
 @RestController
 public class MyController {
-    public static Map<String, String> users = new HashMap<>();
-    /*static {
+    public static Map<String, String> users;
+    static {
         users = new HashMap<>();
         users.put("user1", "password1");
         users.put("user2", "password2");
-    }*/
+    }
     static Map<String, User> usersWhoHaveToken;
     static {
         usersWhoHaveToken = new HashMap<>();
