@@ -2,14 +2,19 @@ package com.example.demo;
 
 import java.io.IOException;
 
+import com.example.demo.models.UserDataBase;
+import com.example.demo.repo.UserDataBaseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.util.ArrayList;
-import static com.example.demo.MyController.usersWhoHaveToken;
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private UserDataBaseRepository userDataBaseRepository;
 
     private static final String AUTH_HEADER = "Authorization";
 
@@ -19,7 +24,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
         String authHeader = request.getHeader(AUTH_HEADER);
-        User user = usersWhoHaveToken.get(authHeader);
+        UserDataBase user = userDataBaseRepository.findByUsername(authHeader);
         if (user != null && !user.isTokenExpired(tokenExpirationDays)) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>()));
         }

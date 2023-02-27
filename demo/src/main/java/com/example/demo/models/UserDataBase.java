@@ -3,6 +3,9 @@ package com.example.demo.models;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 @Entity
 public class UserDataBase {
     @Id
@@ -15,6 +18,12 @@ public class UserDataBase {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "token")
+    private String token;
+
+    @Column(name = "creationTime")
+    private Instant creationTime;
 
     public Long getId() {
         return id;
@@ -40,15 +49,22 @@ public class UserDataBase {
         this.password = password;
     }
 
+    public void setCreationTime() {
+        creationTime = Instant.now();
+    }
+
     public String getToken() {
         return token;
     }
 
     public void setToken(String token) {
         this.token = token;
+        setCreationTime();
     }
 
-    @Column(name = "token")
-    private String token;
+    public boolean isTokenExpired(int tokenExpirationDays) {
+        Instant expirationTime = creationTime.plus(tokenExpirationDays, ChronoUnit.DAYS);
+        return Instant.now().isAfter(expirationTime);
+    }
 
 }

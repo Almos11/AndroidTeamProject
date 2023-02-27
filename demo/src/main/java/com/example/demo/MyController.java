@@ -6,11 +6,8 @@ import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,15 +15,14 @@ import java.util.UUID;
 @RestController
 public class MyController {
 
+    @Autowired
     private UserDataBaseRepository userDataBaseRepository;
+    @Autowired
     private UserService userService;
-    static Map<String, User> usersWhoHaveToken;
-    static {
-        usersWhoHaveToken = new HashMap<>();
-    }
 
     @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<String> login(@RequestParam("username") String username,
+                                        @RequestParam("password") String password) {
         UserDataBase user = userDataBaseRepository.findByUsername(username);
         if (user == null || !user.getPassword().equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -36,8 +32,12 @@ public class MyController {
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody String username, @RequestBody String password) {
+    @GetMapping("/register")
+    public ResponseEntity<String> register(@RequestParam("username") String username,
+                                           @RequestParam("password") String password) {
+        if (userDataBaseRepository.findByUsername(username) != null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         UserDataBase user = new UserDataBase();
         user.setUsername(username);
         user.setPassword(password);
