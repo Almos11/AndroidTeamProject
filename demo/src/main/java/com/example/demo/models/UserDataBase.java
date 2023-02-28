@@ -62,8 +62,8 @@ public class UserDataBase {
         setCreationTime();
     }
 
-    public boolean isTokenExpired(int tokenExpirationDays) {
-        Instant expirationTime = creationTime.plus(tokenExpirationDays, ChronoUnit.DAYS);
+    public boolean isTokenExpired(int tokenExpirationSeconds) {
+        Instant expirationTime = creationTime.plus(tokenExpirationSeconds, ChronoUnit.SECONDS);
         return Instant.now().isAfter(expirationTime);
     }
 

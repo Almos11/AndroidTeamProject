@@ -16,17 +16,24 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDataBaseRepository userDataBaseRepository;
 
-    private static final String AUTH_HEADER = "Authorization";
-
     //действие токена в днях
     int tokenExpirationDays = 30;
 
     @Override
-    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
-        String authHeader = request.getHeader(AUTH_HEADER);
-        UserDataBase user = userDataBaseRepository.findByUsername(authHeader);
+    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
+                                    jakarta.servlet.http.HttpServletResponse response,
+                                    jakarta.servlet.FilterChain filterChain) throws
+            jakarta.servlet.ServletException, IOException {
+        String path = request.getRequestURI();
+        if (path.equals("/login") || path.equals("/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String token = request.getParameter("token");
+        UserDataBase user = userDataBaseRepository.findByToken(token);
         if (user != null && !user.isTokenExpired(tokenExpirationDays)) {
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>()));
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,
+                    null, new ArrayList<>()));
         }
         filterChain.doFilter(request, response);
     }
