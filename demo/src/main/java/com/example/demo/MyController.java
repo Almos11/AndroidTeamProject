@@ -10,9 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -50,8 +47,7 @@ public class MyController {
     }
 
     @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld(@RequestParam("token") String token) {
-
+    public ResponseEntity<String> helloWorld() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDataBase)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
