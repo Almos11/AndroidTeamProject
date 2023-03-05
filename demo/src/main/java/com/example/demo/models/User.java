@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Entity
-public class UserDataBase {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
