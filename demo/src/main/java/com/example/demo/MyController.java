@@ -21,10 +21,6 @@ import java.util.UUID;
 
 @RestController
 public class MyController {
-
-    //100 Мбайт
-    static long maxFileSizeInBytes = 104857600;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -37,13 +33,10 @@ public class MyController {
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam("username") String username,
                                         @RequestParam("password") String password) {
-        UserDataBase user = userRepository.findByUsername(username);
-        if (user == null || !user.getPassword().equals(password)) {
+        String token = userService.checkUser(username, password);
+        if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String token = UUID.randomUUID().toString();
-        user.setToken(token);
-        userService.saveUser(user);
         return ResponseEntity.ok(token);
     }
 
@@ -53,10 +46,7 @@ public class MyController {
         if (userService.isUsernameTaken(username)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserDataBase user = new UserDataBase();
-        user.setUsername(username);
-        user.setPassword(password);
-        userService.saveUser(user);
+        userService.generateUser(username, password);
         return ResponseEntity.ok("User registered successfully");
     }
 
@@ -70,17 +60,10 @@ public class MyController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Video> uploadVideo(
+    public ResponseEntity<String> uploadVideo(
             @RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
-        String token = request.getParameter("token");
-        if (file.getSize() < maxFileSizeInBytes) {
-            UserDataBase user = userRepository.findByToken(token);
-            Video video = new Video();
-            video.setName(file.getOriginalFilename());
-            video.setData(file.getBytes());
-            video.setUser(user);
-            videoService.saveVideo(video);
-            return ResponseEntity.ok(video);
+        if (videoService.generateVideo(file, request)) {
+            return ResponseEntity.ok("Success");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
