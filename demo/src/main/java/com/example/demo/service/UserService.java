@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.models.User;
+import com.example.demo.models.UserDataBase;
 import com.example.demo.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ public class UserService {
         this.userRepository = userDataBaseRepository;
     }
 
-    public void saveUser(User user) {
+    public void saveUser(UserDataBase user) {
         userRepository.save(user);
     }
     public boolean isUsernameTaken(String username) {

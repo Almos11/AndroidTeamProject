@@ -34,9 +34,9 @@ public class Video {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserDataBase userDataBase;
 
-    public void setUser (User user) {
-        this.user = user;
+    public void setUser (UserDataBase userDataBase) {
+        this.userDataBase = userDataBase;
     }
 }
