@@ -6,6 +6,7 @@ import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.service.VideoService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,10 @@ public class MyController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/register")
-    public ResponseEntity<String> register(@RequestParam("username") String username,
-                                           @RequestParam("password") String password) {
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody ObjectNode objectNode) {
+        String username = objectNode.get("name").asText();
+        String password = objectNode.get("pass").asText();
         if (userService.isUsernameTaken(username)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -56,15 +58,17 @@ public class MyController {
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDataBase)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok("Hello, world!");
+        return ResponseEntity.ok("Hello, world");
     }
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadVideo(
-            @RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
-        if (videoService.generateVideo(file, request)) {
+            @RequestParam("file") MultipartFile file , HttpServletRequest request) throws IOException {
+        String fileName = file.getName();
+        return ResponseEntity.ok(fileName);
+       /* if (videoService.generateVideo(file, request)) {
             return ResponseEntity.ok("Success");
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }*/
+        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

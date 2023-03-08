@@ -26,7 +26,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws
             jakarta.servlet.ServletException, IOException {
         String requestName = request.getRequestURI();
-        if (requestName.equals("/login")) {
+        if (requestName.equals("/login") || requestName.equals("/upload")) {
             filterChain.doFilter(request, response);
             return;
         }
