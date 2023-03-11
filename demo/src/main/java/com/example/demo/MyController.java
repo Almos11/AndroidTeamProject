@@ -46,12 +46,11 @@ public class MyController {
         String username = objectNode.get("name").asText();
         String password = objectNode.get("pass").asText();
         if (userService.isUsernameTaken(username)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         userService.generateUser(username, password);
         return ResponseEntity.ok("User registered successfully");
     }
-
     @GetMapping("/hello")
     public ResponseEntity<String> helloWorld() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

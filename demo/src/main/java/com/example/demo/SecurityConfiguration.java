@@ -16,5 +16,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests()
                 .requestMatchers("/**").permitAll();
         http.addFilterBefore(tokenFilter, AuthorizationFilter.class);
-        return http.build();}
+        http.csrf().disable();
+        return http.build();
+    }
 }
