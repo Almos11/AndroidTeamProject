@@ -26,7 +26,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws
             jakarta.servlet.ServletException, IOException {
         String requestName = request.getRequestURI();
-        if (requestName.equals("/login") || requestName.equals("/upload")) {
+        if (requestName.equals("/login") || requestName.equals("/register")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -35,8 +35,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (user != null && !user.isTokenExpired(tokenExpirationSeconds)) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,
                     null, new ArrayList<>()));
+            filterChain.doFilter(request, response);
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-        filterChain.doFilter(request, response);
     }
 }
 
