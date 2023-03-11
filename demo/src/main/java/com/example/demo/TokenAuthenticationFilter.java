@@ -30,7 +30,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = request.getParameter("token");
+        String token = request.getHeader("Authorization");
         UserDataBase user = userDataBaseRepository.findByToken(token);
         if (user != null && !user.isTokenExpired(tokenExpirationSeconds)) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,

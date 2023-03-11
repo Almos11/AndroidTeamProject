@@ -10,8 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -62,12 +61,20 @@ public class MyController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadVideo(
-            @RequestParam("file") MultipartFile file , HttpServletRequest request) throws IOException {
-        String fileName = file.getName();
-        return ResponseEntity.ok(fileName);
-       /* if (videoService.generateVideo(file, request)) {
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader("Authorization") String token) throws IOException {
+        if (videoService.generateVideo(file, token)) {
             return ResponseEntity.ok("Success");
-        }*/
-        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok("Fail");
+    }
+
+    @GetMapping("/download/{name}")
+    public ResponseEntity<byte[]> downloadVideo(@PathVariable String name) {
+        byte[] data = videoRepository.findByName(name).getData();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename("video.mp4").build());
+        return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
 }

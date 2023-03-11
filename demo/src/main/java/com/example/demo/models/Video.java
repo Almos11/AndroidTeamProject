@@ -18,6 +18,10 @@ public class Video {
         this.data = data;
     }
 
+    public byte[] getData() {
+        return data;
+    }
+
     @Column(name = "name")
     private String name;
 

@@ -20,7 +20,9 @@ public class VideoService {
 
     @Autowired
     private  UserRepository userRepository;
-    private final VideoRepository videoRepository;
+
+    @Autowired
+    private  VideoRepository videoRepository;
     @Autowired
     public VideoService(VideoRepository videoRepository) {
         this.videoRepository = videoRepository;
@@ -30,13 +32,20 @@ public class VideoService {
         videoRepository.save(video);
     }
 
-    public boolean generateVideo(MultipartFile file, HttpServletRequest request) throws IOException  {
+    public boolean generateVideo(MultipartFile file, String token) throws IOException  {
         if (file.getSize() < maxFileSizeInBytes) {
-            String token = request.getParameter("token");
             UserDataBase user = userRepository.findByToken(token);
+            if (user == null) {
+                return false;
+            }
+            String videoName = file.getOriginalFilename();
+            /*if (videoRepository.findByName(videoName) != null) {
+                return false;
+            }*/
             Video video = new Video();
-            video.setName(file.getOriginalFilename());
-            video.setData(file.getBytes());
+            byte[] videoData = file.getBytes();
+            video.setName(videoName);
+            video.setData(videoData);
             video.setUser(user);
             this.saveVideo(video);
             return true;
