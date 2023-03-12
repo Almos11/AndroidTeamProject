@@ -10,6 +10,10 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public Long getId() {
+        return id;
+    }
+
     @Lob
     @Column(name = "data")
     private byte[] data;

@@ -32,25 +32,22 @@ public class VideoService {
         videoRepository.save(video);
     }
 
-    public boolean generateVideo(MultipartFile file, String token) throws IOException  {
+    public Long generateVideo(MultipartFile file, String token) throws IOException  {
         if (file.getSize() < maxFileSizeInBytes) {
             UserDataBase user = userRepository.findByToken(token);
             if (user == null) {
-                return false;
+                return -1L;
             }
             String videoName = file.getOriginalFilename();
-            /*if (videoRepository.findByName(videoName) != null) {
-                return false;
-            }*/
             Video video = new Video();
             byte[] videoData = file.getBytes();
             video.setName(videoName);
             video.setData(videoData);
             video.setUser(user);
             this.saveVideo(video);
-            return true;
+            return video.getId();
         }
-        return false;
+        return -1L;
     }
 
 }

@@ -60,21 +60,24 @@ public class MyController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadVideo(
+    public Long uploadVideo(
             @RequestParam("file") MultipartFile file,
             @RequestHeader("Authorization") String token) throws IOException {
-        if (videoService.generateVideo(file, token)) {
-            return ResponseEntity.ok("Success");
+        Long id = videoService.generateVideo(file, token);
+        if (id == -1) {
+            return -1L;
         }
-        return ResponseEntity.ok("Fail");
+        return id;
     }
 
-    @GetMapping("/download/{name}")
-    public ResponseEntity<byte[]> downloadVideo(@PathVariable String name) {
-        byte[] data = videoRepository.findByName(name).getData();
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> downloadVideo(@RequestParam("Id") Long id) {
+        byte[] data = videoRepository.findVideoById(id).getData();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDisposition(ContentDisposition.builder("attachment").filename("video.mp4").build());
+        headers.setContentDisposition(ContentDisposition.builder("inline").
+                filename("video.mp4").build());
+
         return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
 }
