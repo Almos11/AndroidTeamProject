@@ -18,7 +18,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserRepository userDataBaseRepository;
-    int tokenExpirationSeconds = 3600;
+    int tokenExpirationSeconds = 36000;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

@@ -1,14 +1,11 @@
 package com.example.demo;
 
 import com.example.demo.models.UserDataBase;
-import com.example.demo.models.Video;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.service.VideoService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @RestController
@@ -60,19 +58,20 @@ public class MyController {
     }
 
     @PostMapping("/upload")
-    public Long uploadVideo(
+    public ResponseEntity<String> uploadVideo(
             @RequestParam("file") MultipartFile file,
-            @RequestHeader("Authorization") String token) throws IOException {
-        Long id = videoService.generateVideo(file, token);
-        if (id == -1) {
-            return -1L;
+            @RequestHeader("Authorization") String token) throws IOException, NoSuchAlgorithmException {
+        String id = videoService.generateVideo(file, token);
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return id;
+        return ResponseEntity.ok(id);
     }
 
     @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadVideo(@RequestParam("Id") Long id) {
-        byte[] data = videoRepository.findVideoById(id).getData();
+    public ResponseEntity<byte[]> downloadVideo(@RequestParam("Id") String id,
+                                                @RequestHeader("Authorization") String token) {
+        byte[] data = videoRepository.findVideoByIdentifier(id).getData();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDisposition(ContentDisposition.builder("inline").

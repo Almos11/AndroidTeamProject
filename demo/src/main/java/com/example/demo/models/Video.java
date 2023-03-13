@@ -26,6 +26,16 @@ public class Video {
         return data;
     }
 
+    @Column(name = "identifier")
+    private String identifier;
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
     @Column(name = "name")
     private String name;
 
