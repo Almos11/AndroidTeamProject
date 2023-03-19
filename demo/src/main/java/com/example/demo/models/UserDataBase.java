@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Entity
 public class UserDataBase {
@@ -65,6 +66,13 @@ public class UserDataBase {
     public boolean isTokenExpired(int tokenExpirationSeconds) {
         Instant expirationTime = creationTime.plus(tokenExpirationSeconds, ChronoUnit.SECONDS);
         return Instant.now().isAfter(expirationTime);
+    }
+
+    @OneToMany(mappedBy = "user")
+    private List<LikedVideo> likedVideos;
+
+    public List<LikedVideo> getLikedVideos() {
+        return likedVideos;
     }
 
 }

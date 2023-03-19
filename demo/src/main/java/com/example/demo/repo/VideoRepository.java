@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -22,6 +23,13 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
     @Transactional
     public Video findVideoByIdentifier(String identifier);
+
+    @Transactional
+    public List<Video> findAll();
+
+    @Transactional
+    ArrayList<Video> findAllByOrderByRatingDesc();
+
 
 
 

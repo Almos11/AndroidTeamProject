@@ -26,6 +26,13 @@ public class Video {
         return data;
     }
 
+    @Column(name = "rating")
+    private Integer rating;
+
+    public int getRating() {
+        return rating;
+    }
+
     @Column(name = "identifier")
     private String identifier;
 
@@ -39,9 +46,43 @@ public class Video {
     @Column(name = "name")
     private String name;
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
+
+    @Column(name = "countLike")
+    private Integer countLike;
+    public void setCountLike() {
+        this.countLike = 0;
+    }
+
+    public void decreaseCountLike() {
+        this.countLike--;
+    }
+
+    public void increaseCountLike() {
+        this.countLike++;
+    }
+
+    @Column(name = "countDislike")
+    private Integer countDislike;
+
+    public void setCountDislike() {
+        this.countDislike = 0;
+    }
+
+    public void decreaseCountDislike() {
+        this.countDislike--;
+    }
+
+    public void increaseCountDislike() {
+        this.countDislike++;
+    }
+
 
     @Column(name = "content_type")
     private String contentType;

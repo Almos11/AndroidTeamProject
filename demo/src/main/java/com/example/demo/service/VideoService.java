@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 public class VideoService {
 
     //100 Мбайт
-    static long maxFileSizeInBytes = 104857600;
+    static long maxFileSizeInBytes = 1048576;
 
     @Autowired
     private  UserRepository userRepository;
@@ -49,6 +49,8 @@ public class VideoService {
             video.setName(videoName);
             video.setData(videoData);
             video.setUser(user);
+            video.setCountDislike();
+            video.setCountLike();
             this.saveVideo(video);
             return video.getIdentifier();
         }
