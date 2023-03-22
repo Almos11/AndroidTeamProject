@@ -29,6 +29,10 @@ public class Video {
     @Column(name = "rating")
     private Integer rating;
 
+    public void updateRating() {
+        this.rating = Math.max(this.countLike - this.countDislike, 0);
+    }
+
     public int getRating() {
         return rating;
     }
