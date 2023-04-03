@@ -64,6 +64,8 @@ public class Video {
         this.countLike = 0;
     }
 
+    public int getCountLike() { return this.countLike; }
+
     public void decreaseCountLike() {
         this.countLike--;
     }
@@ -79,6 +81,8 @@ public class Video {
         this.countDislike = 0;
     }
 
+    public int getCountDislike() { return this.countDislike; }
+
     public void decreaseCountDislike() {
         this.countDislike--;
     }
@@ -87,6 +91,43 @@ public class Video {
         this.countDislike++;
     }
 
+    @Column(name = "author")
+    private String author;
+
+    public void setAuthorName(String name) {
+        author = name;
+    }
+
+    public String getAuthorName() {
+        return this.author;
+    }
+
+
+    @Column(name = "views")
+    private int views = 0;
+
+    public void increaseCountViews() {
+        this.views++;
+    }
+
+    public int getViews() {
+        return this.views;
+    }
+
+    @Column(name = "comments")
+    private int comments = 0;
+
+    public void increaseCountComments() {
+        this.comments++;
+    }
+
+    public void decreaseCountComments() {
+        this.comments--;
+    }
+
+    public int getComments() {
+        return this.comments;
+    }
 
     @Column(name = "content_type")
     private String contentType;

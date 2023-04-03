@@ -52,6 +52,7 @@ public class VideoService {
             video.setCountDislike();
             video.setCountLike();
             video.updateRating();
+            video.setAuthorName(user.getUsername());
             this.saveVideo(video);
             return video.getIdentifier();
         }

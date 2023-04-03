@@ -1,11 +1,17 @@
 package com.example.demo;
 
+import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
+import com.example.demo.models.Video;
+import com.example.demo.repo.LikedVideoRepository;
+import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
 import com.example.demo.service.DislikedVideoService;
 import com.example.demo.service.LikedVideoService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.VideoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -27,6 +33,10 @@ public class MyController {
     private VideoService videoService;
     @Autowired
     private LikedVideoService likedVideoService;
+    @Autowired
+    private LikedVideoRepository likedVideoRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private DislikedVideoService dislikedVideoService;
 
@@ -82,32 +92,42 @@ public class MyController {
         return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/sortVideo")
-    public ResponseEntity<String> getTopVideo() {
-        videoRepository.updateVideos();
-        return ResponseEntity.ok("success");
+    @GetMapping("/nextVideo")
+    @ResponseBody
+    public String getTopVideo() throws JsonProcessingException {
+        String id = videoRepository.getTopRatedVideoId();
+        Video video = videoRepository.findVideoByIdentifier(id);
+        class VideoData {
+            String id;
+            String author_id;
+            String author_name;
+            int likes;
+            int comments;
+            int views;
+        }
+        VideoData videoData = new VideoData();
+        videoData.id = id;
+        videoData.author_name = video.getAuthorName();
+        videoData.likes = video.getCountLike();
+        videoData.comments = video.getComments();
+        videoData.views = video.getViews();
+        videoData.author_id = "";
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(videoData);
+        return json;
     }
 
     @GetMapping("/like")
-    public String addLike(@RequestParam("Id") String id,
+    public ResponseEntity<String> addLike(@RequestParam("Id") String id,
                           @RequestHeader("Authorization") String token) {
         if (likedVideoService.addToLikedVideos(token, id)) {
-            return "Success";
+            return ResponseEntity.ok("Success");
         } else {
-            return "Already exist";
-        }
-    }
-    @GetMapping("/dislike")
-    public String addDislike(@RequestParam("Id") String id,
-                             @RequestHeader("Authorization") String token) {
-        if (dislikedVideoService.addToDislikedVideos(token, id)) {
-            return "Success";
-        } else {
-            return "Already exist";
+            return ResponseEntity.badRequest().build();
         }
     }
 
-    /*@GetMapping("/unlike")
+    @GetMapping("/unlike")
     public String deleteLike(@RequestParam("Id") String id,
                            @RequestHeader("Authorization") String token) {
         Video video = videoRepository.findVideoByIdentifier(id);
@@ -115,16 +135,11 @@ public class MyController {
         LikedVideo likedVideo = likedVideoRepository.findByUserAndVideo(user, video);
         if (likedVideo != null) {
             video.decreaseCountLike();
-            video.updateRating();
+
             likedVideoRepository.delete(likedVideo);
             return "Success";
         }
         return "Fail";
     }
-    @GetMapping("/deleteDislike")
-    public void deleteDislike(@RequestParam("Id") String id) {
-        Video video = videoRepository.findVideoByIdentifier(id);
-        video.decreaseCountDislike();
-        video.updateRating();
-    }*/
+
 }
