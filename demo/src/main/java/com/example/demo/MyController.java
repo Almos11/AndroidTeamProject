@@ -7,10 +7,7 @@ import com.example.demo.models.VideoData;
 import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
-import com.example.demo.service.DislikedVideoService;
-import com.example.demo.service.LikedVideoService;
-import com.example.demo.service.UserService;
-import com.example.demo.service.VideoService;
+import com.example.demo.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -41,7 +38,7 @@ public class MyController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private DislikedVideoService dislikedVideoService;
+    private ViewService viewService;
 
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam("username") String username,
@@ -111,10 +108,10 @@ public class MyController {
     }
 
     @GetMapping("/like")
-    public ResponseEntity<String> addLike(@RequestParam("Id") String id,
+    public ResponseEntity<Void> addLike(@RequestParam("Id") String id,
                           @RequestHeader("Authorization") String token) {
         if (likedVideoService.addToLikedVideos(token, id)) {
-            return ResponseEntity.ok("Success");
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().build();
         }
@@ -133,6 +130,13 @@ public class MyController {
            return ResponseEntity.ok("Success");
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/watch")
+    public ResponseEntity<Void> markVideoAsWatched(@RequestParam("Id") String video_id,
+                                                   @RequestHeader("Authorization") String token) {
+        viewService.addView(token, video_id);
+        return ResponseEntity.ok().build();
     }
 
 }
