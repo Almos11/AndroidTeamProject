@@ -29,17 +29,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     @Transactional
     public List<Video> findAll();
 
-    /*@Transactional
-    @Query(value = "UPDATE videos SET position = subquery.position " +
-            "FROM (SELECT id, ROW_NUMBER() OVER (ORDER BY rating DESC) " +
-            "as position FROM videos) AS subquery WHERE videos.id = subquery.id",
-            nativeQuery = true)
-    void updateVideos();
-
-    @Transactional
-    @Query(value = "SELECT * FROM videos ORDER BY LOG(rating) DESC", nativeQuery = true)
-    List<Video> getSortedVideos();*/
-
     @Transactional
     @Query(value = "SELECT identifier FROM videos ORDER BY LOG(rating) DESC LIMIT 1", nativeQuery = true)
     String getTopRatedVideoId();

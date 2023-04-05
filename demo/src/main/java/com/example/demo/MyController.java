@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
 import com.example.demo.models.Video;
+import com.example.demo.models.VideoData;
 import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
@@ -25,6 +26,8 @@ import java.security.NoSuchAlgorithmException;
 
 @RestController
 public class MyController {
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private UserService userService;
     @Autowired
@@ -97,24 +100,14 @@ public class MyController {
     public String getTopVideo() throws JsonProcessingException {
         String id = videoRepository.getTopRatedVideoId();
         Video video = videoRepository.findVideoByIdentifier(id);
-        class VideoData {
-            String id;
-            String author_id;
-            String author_name;
-            int likes;
-            int comments;
-            int views;
-        }
         VideoData videoData = new VideoData();
-        videoData.id = id;
-        videoData.author_name = video.getAuthorName();
-        videoData.likes = video.getCountLike();
-        videoData.comments = video.getComments();
-        videoData.views = video.getViews();
-        videoData.author_id = "";
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(videoData);
-        return json;
+        videoData.setId(id);
+        videoData.setAuthor_name(video.getAuthorName());
+        videoData.setLikes(video.getCountLike());
+        videoData.setComments(video.getComments());
+        videoData.setViews(video.getViews());
+        videoData.setAuthor_id("");
+        return objectMapper.writeValueAsString(videoData);
     }
 
     @GetMapping("/like")
@@ -128,7 +121,7 @@ public class MyController {
     }
 
     @GetMapping("/unlike")
-    public String deleteLike(@RequestParam("Id") String id,
+    public ResponseEntity<String> deleteLike(@RequestParam("Id") String id,
                            @RequestHeader("Authorization") String token) {
         Video video = videoRepository.findVideoByIdentifier(id);
         UserDataBase user = userRepository.findByToken(token);
@@ -137,9 +130,9 @@ public class MyController {
             video.decreaseCountLike();
 
             likedVideoRepository.delete(likedVideo);
-            return "Success";
+           return ResponseEntity.ok("Success");
         }
-        return "Fail";
+        return ResponseEntity.badRequest().build();
     }
 
 }
