@@ -81,12 +81,6 @@ public class Video {
         this.countDislike = 0;
     }
 
-    public int getCountDislike() { return this.countDislike; }
-
-    public void decreaseCountDislike() {
-        this.countDislike--;
-    }
-
     public void increaseCountDislike() {
         this.countDislike++;
     }
@@ -104,7 +98,11 @@ public class Video {
 
 
     @Column(name = "views")
-    private int views = 0;
+    private Integer views;
+
+    public void setViews() {
+        this.views = 0;
+    }
 
     public void increaseCountViews() {
         this.views++;
@@ -115,8 +113,11 @@ public class Video {
     }
 
     @Column(name = "comments")
-    private int comments = 0;
+    private Integer comments;
 
+    public void setComments() {
+        this.comments = 0;
+    }
     public void increaseCountComments() {
         this.comments++;
     }

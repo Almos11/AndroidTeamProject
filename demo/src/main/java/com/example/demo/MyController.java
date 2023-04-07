@@ -3,13 +3,11 @@ package com.example.demo;
 import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
 import com.example.demo.models.Video;
-import com.example.demo.models.VideoData;
 import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
 import com.example.demo.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -24,8 +22,6 @@ import java.security.NoSuchAlgorithmException;
 @RestController
 public class MyController {
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private UserService userService;
     @Autowired
     private VideoRepository videoRepository;
@@ -39,6 +35,8 @@ public class MyController {
     private UserRepository userRepository;
     @Autowired
     private ViewService viewService;
+    @Autowired
+    private VideoDataService videoDataService;
 
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam("username") String username,
@@ -94,17 +92,12 @@ public class MyController {
 
     @GetMapping("/nextVideo")
     @ResponseBody
-    public String getTopVideo() throws JsonProcessingException {
-        String id = videoRepository.getTopRatedVideoId();
-        Video video = videoRepository.findVideoByIdentifier(id);
-        VideoData videoData = new VideoData();
-        videoData.setId(id);
-        videoData.setAuthor_name(video.getAuthorName());
-        videoData.setLikes(video.getCountLike());
-        videoData.setComments(video.getComments());
-        videoData.setViews(video.getViews());
-        videoData.setAuthor_id("");
-        return objectMapper.writeValueAsString(videoData);
+    public ResponseEntity<String> getTopVideo(@RequestHeader("Authorization") String token) throws JsonProcessingException {
+        String jsonData = videoDataService.setupJsonFormatVideoData(token);
+        if (jsonData == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(jsonData);
     }
 
     @GetMapping("/like")
