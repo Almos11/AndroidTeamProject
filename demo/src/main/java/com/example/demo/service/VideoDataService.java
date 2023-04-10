@@ -28,9 +28,7 @@ public class VideoDataService {
         videoData.setAuthor_name(video.getAuthorName());
         videoData.setLikes(video.getCountLike());
         videoData.setRating(video.getRating());
-        video.setComments();
-        video.setViews();
-        videoData.setComments(video.getComments());
+        videoData.setComments(video.getCountComments());
         videoData.setViews(video.getViews());
         videoData.setAuthor_id("");
         return objectMapper.writeValueAsString(videoData);

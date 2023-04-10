@@ -45,14 +45,17 @@ public class VideoService {
             if (videoRepository.findVideoByIdentifier(identifier) != null) {
                 return null;
             }
-            video.setIdentifier(identifier);
-            video.setName(videoName);
+            video.setContentType(null);
             video.setData(videoData);
+            video.setName(videoName);
             video.setUser(user);
+            video.setIdentifier(identifier);
+            video.setRating();
             video.setCountDislike();
             video.setCountLike();
-            video.updateRating();
-            video.setAuthorName(user.getUsername());
+            video.setAuthor(user.getUsername());
+            video.setViews();
+            video.setCountComments();
             this.saveVideo(video);
             return video.getIdentifier();
         }

@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.models.Comment;
 import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
 import com.example.demo.models.Video;
@@ -18,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 public class MyController {
@@ -37,6 +40,8 @@ public class MyController {
     private ViewService viewService;
     @Autowired
     private VideoDataService videoDataService;
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam("username") String username,
@@ -92,7 +97,8 @@ public class MyController {
 
     @GetMapping("/nextVideo")
     @ResponseBody
-    public ResponseEntity<String> getTopVideo(@RequestHeader("Authorization") String token) throws JsonProcessingException {
+    public ResponseEntity<String> getTopVideo(@RequestHeader("Authorization") String token)
+            throws JsonProcessingException {
         String jsonData = videoDataService.setupJsonFormatVideoData(token);
         if (jsonData == null) {
             return ResponseEntity.badRequest().build();
@@ -126,10 +132,24 @@ public class MyController {
     }
 
     @GetMapping("/watch")
-    public ResponseEntity<Void> markVideoAsWatched(@RequestParam("Id") String video_id,
+    public ResponseEntity<Void> markVideoAsWatched(@RequestParam("Identifier") String video_identifier,
                                                    @RequestHeader("Authorization") String token) {
-        viewService.addView(token, video_id);
+        viewService.addView(token, video_identifier);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/getComments")
+    public  ResponseEntity<List<Comment>> getComments(@RequestParam("Identifier") String video_identifier) {
+        Video video = videoRepository.findVideoByIdentifier(video_identifier);
+        List<Comment> comments = video.getComments();
+        return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping("/addComment")
+    public ResponseEntity<Void> addComment(@RequestParam("Identifier") String video_identifier,
+                                           @RequestParam("Content") String content,
+                                           @RequestHeader("Authorization") String token) {
+        commentService.addComment(video_identifier, token, content);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

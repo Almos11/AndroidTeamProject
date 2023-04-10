@@ -1,8 +1,4 @@
 package com.example.demo.models;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-@JsonSerialize(using = VideoDataSerializer.class)
 public class VideoData {
     String id;
     String author_id;

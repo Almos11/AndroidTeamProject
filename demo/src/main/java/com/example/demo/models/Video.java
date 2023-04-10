@@ -2,6 +2,9 @@ package com.example.demo.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "videos")
 public class Video {
@@ -28,6 +31,10 @@ public class Video {
 
     @Column(name = "rating")
     private Integer rating;
+
+    public void setRating() {
+        this.rating = 0;
+    }
 
     public void updateRating() {
         this.rating = Math.max(this.countLike - this.countDislike, 0);
@@ -88,7 +95,7 @@ public class Video {
     @Column(name = "author")
     private String author;
 
-    public void setAuthorName(String name) {
+    public void setAuthor(String name) {
         author = name;
     }
 
@@ -112,22 +119,35 @@ public class Video {
         return this.views;
     }
 
-    @Column(name = "comments")
-    private Integer comments;
+    @Column(name = "count_comments")
+    private Integer countComments;
 
-    public void setComments() {
-        this.comments = 0;
+
+    public void setCountComments() {
+        this.countComments = 0;
     }
     public void increaseCountComments() {
-        this.comments++;
+        this.countComments++;
     }
 
     public void decreaseCountComments() {
-        this.comments--;
+        this.countComments--;
     }
 
-    public int getComments() {
-        return this.comments;
+    public int getCountComments() {
+        return this.countComments;
+    }
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+
+    public void addComment(Comment comment) {
+        comment.setVideo(this);
+        comments.add(comment);
     }
 
     @Column(name = "content_type")
