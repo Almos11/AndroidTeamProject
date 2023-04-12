@@ -4,7 +4,6 @@ import com.example.demo.models.Comment;
 import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
 import com.example.demo.models.Video;
-import com.example.demo.repo.CommentRepository;
 import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -44,8 +42,6 @@ public class MyController {
     private VideoDataService videoDataService;
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private CommentRepository commentRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @GetMapping("/login")
@@ -89,8 +85,7 @@ public class MyController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadVideo(@RequestParam("Id") String id,
-                                                @RequestHeader("Authorization") String token) {
+    public ResponseEntity<byte[]> downloadVideo(@RequestParam("Id") String id) {
         byte[] data = videoRepository.findVideoByIdentifier(id).getData();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
