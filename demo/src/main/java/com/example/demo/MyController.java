@@ -4,11 +4,13 @@ import com.example.demo.models.Comment;
 import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
 import com.example.demo.models.Video;
+import com.example.demo.repo.CommentRepository;
 import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
 import com.example.demo.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -42,7 +44,10 @@ public class MyController {
     private VideoDataService videoDataService;
     @Autowired
     private CommentService commentService;
-
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam("username") String username,
                                         @RequestParam("password") String password) {
@@ -138,10 +143,15 @@ public class MyController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/getComments")
-    public  ResponseEntity<List<Comment>> getComments(@RequestParam("Identifier") String video_identifier) {
+    public  ResponseEntity<String> getComments(
+            @RequestParam("Identifier") String video_identifier) throws JsonProcessingException {
         Video video = videoRepository.findVideoByIdentifier(video_identifier);
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
         List<Comment> comments = video.getComments();
-        return ResponseEntity.ok(comments);
+        String jsonData = objectMapper.writeValueAsString(comments);
+        return ResponseEntity.ok(jsonData);
     }
 
     @GetMapping("/addComment")
