@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.components;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;

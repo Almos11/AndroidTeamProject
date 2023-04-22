@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import com.example.demo.models.Comment;
 import com.example.demo.models.LikedVideo;
@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -156,5 +157,19 @@ public class MyController {
         commentService.addComment(video_identifier, token, content);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    @PostMapping("/askKoboldAI")
+    public ResponseEntity<String> askKoboldAI(@RequestBody ObjectNode objectNode) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
+        ObjectNode requestObject = objectMapper.createObjectNode();
+        requestObject.put("text", objectNode.get("Hello!").asText());
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestObject.toString(), headers);
+
+        String koboldAIUrl = "http://localhost:5001";
+        String response = restTemplate.postForObject(koboldAIUrl, requestEntity, String.class);
+
+        return ResponseEntity.ok(response);
+    }
 }

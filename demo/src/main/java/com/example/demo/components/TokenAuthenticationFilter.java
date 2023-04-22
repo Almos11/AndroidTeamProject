@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.components;
 
 import java.io.IOException;
 
@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     int tokenExpirationSeconds = 36000;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws
             jakarta.servlet.ServletException, IOException {
         String requestName = request.getRequestURI();
         if (requestName.equals("/login") || requestName.equals("/register")) {
