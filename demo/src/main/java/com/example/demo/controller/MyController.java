@@ -1,12 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.models.Comment;
-import com.example.demo.models.LikedVideo;
-import com.example.demo.models.UserDataBase;
-import com.example.demo.models.Video;
+import com.example.demo.models.*;
 import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
+import com.example.demo.repo.WordRepository;
 import com.example.demo.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +14,6 @@ import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -45,6 +42,10 @@ public class MyController {
     private CommentService commentService;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private WordRepository wordRepository;
+    @Autowired
+    private WordService wordService;
     @GetMapping("/login")
     public ResponseEntity<String> login(@RequestParam("username") String username,
                                         @RequestParam("password") String password) {
@@ -157,19 +158,9 @@ public class MyController {
         commentService.addComment(video_identifier, token, content);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    @PostMapping("/askKoboldAI")
-    public ResponseEntity<String> askKoboldAI(@RequestBody ObjectNode objectNode) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        ObjectNode requestObject = objectMapper.createObjectNode();
-        requestObject.put("text", objectNode.get("Hello!").asText());
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestObject.toString(), headers);
-
-        String koboldAIUrl = "http://localhost:5001";
-        String response = restTemplate.postForObject(koboldAIUrl, requestEntity, String.class);
-
-        return ResponseEntity.ok(response);
+    @PostMapping("/words")
+    public ResponseEntity<String> addWords(@RequestBody List<String> words) {
+        wordService.saveWords(words);
+        return ResponseEntity.ok("Words added successfully.");
     }
 }
