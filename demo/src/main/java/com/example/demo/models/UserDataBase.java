@@ -23,6 +23,15 @@ public class UserDataBase {
     @Column(name = "token")
     private String token;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "count_videos")
+    private Integer count_videos;
+
+    @Column(name = "count_likes")
+    private Integer count_likes;
+
     @Column(name = "creationTime")
     private Instant creationTime;
 
@@ -75,4 +84,27 @@ public class UserDataBase {
         return likedVideos;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getCount_videos() {
+        return count_videos;
+    }
+
+    public void setCount_videos(Integer count_videos) {
+        this.count_videos = count_videos;
+    }
+
+    public Integer getCount_likes() {
+        return count_likes;
+    }
+
+    public void setCount_likes(Integer count_likes) {
+        this.count_likes = count_likes;
+    }
 }

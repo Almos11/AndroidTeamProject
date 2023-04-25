@@ -11,16 +11,9 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userDataBaseRepository) {
-        this.userRepository = userDataBaseRepository;
-    }
-
-    public void saveUser(UserDataBase user) {
-        userRepository.save(user);
-    }
+    UserRepository userRepository;
     public boolean isUsernameTaken(String username) {
         return userRepository.findByUsername(username) != null;
     }
@@ -28,7 +21,10 @@ public class UserService {
         UserDataBase user = new UserDataBase();
         user.setUsername(username);
         user.setPassword(password);
-        this.saveUser(user);
+        user.setCount_likes(0);
+        user.setCount_videos(0);
+        user.setDescription("");
+        userRepository.save(user);
 
     }
 
@@ -39,7 +35,7 @@ public class UserService {
         }
         String token = UUID.randomUUID().toString();
         user.setToken(token);
-        this.saveUser(user);
+        userRepository.save(user);
         return token;
     }
 }

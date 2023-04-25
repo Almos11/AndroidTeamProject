@@ -21,7 +21,7 @@ public class ScheduledTask {
     @Autowired
     private ObjectMapper objectMapper;
     //If you want to use koboldAI, then uncomment the following function
-    @Scheduled(fixedDelay = 36000000)
+    /*@Scheduled(fixedDelay = 36000000)
     public void generateTaskFromKoboldAI() throws IOException, InterruptedException {
         List<String> words = wordRepository.findRandomWords();
         HttpClient client = HttpClient.newHttpClient();
@@ -41,7 +41,7 @@ public class ScheduledTask {
         JsonNode jsonNode = objectMapper.readTree(response.body());
         String result = jsonNode.get("results").get(0).get("text").asText();
         System.out.println(result);
-    }
+    }*/
 
     private String generateTask(List<String> words) {
         StringBuilder questionBuilder = new StringBuilder("Come up with an idea for a 30 second video that will be associated with the words - ");
