@@ -37,7 +37,7 @@ public class Video {
     }
 
     public void updateRating() {
-        this.rating = Math.max(this.countLike - this.countDislike, 0);
+        this.rating = this.countLike;
     }
 
     public int getRating() {
@@ -79,17 +79,6 @@ public class Video {
 
     public void increaseCountLike() {
         this.countLike++;
-    }
-
-    @Column(name = "countDislike")
-    private Integer countDislike;
-
-    public void setCountDislike() {
-        this.countDislike = 0;
-    }
-
-    public void increaseCountDislike() {
-        this.countDislike++;
     }
 
     @Column(name = "author")

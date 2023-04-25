@@ -1,6 +1,5 @@
 package com.example.demo.repo;
 
-import com.example.demo.models.DislikedVideo;
 import com.example.demo.models.LikedVideo;
 import com.example.demo.models.UserDataBase;
 import com.example.demo.models.Video;

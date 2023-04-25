@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.models.*;
-import com.example.demo.repo.LikedVideoRepository;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.repo.VideoRepository;
 import com.example.demo.repo.WordRepository;
@@ -11,8 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +27,6 @@ public class MyController {
     private VideoService videoService;
     @Autowired
     private LikedVideoService likedVideoService;
-    @Autowired
-    private LikedVideoRepository likedVideoRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -60,22 +55,12 @@ public class MyController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody ObjectNode objectNode) {
-        String username = objectNode.get("username").asText();
-        String password = objectNode.get("password").asText();
-        if (userService.isUsernameTaken(username)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    public ResponseEntity<Void> register(@RequestBody ObjectNode objectNode) {
+        if (userService.addNewUser(objectNode)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
         }
-        userService.generateUser(username, password);
-        return ResponseEntity.ok("User registered successfully");
-    }
-    @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserDataBase)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        return ResponseEntity.ok("Hello, world");
     }
 
     @PostMapping("/upload")
@@ -111,18 +96,10 @@ public class MyController {
     }
 
     @GetMapping("/unlike")
-    public ResponseEntity<String> deleteLike(@RequestParam("Id") String id,
+    public ResponseEntity<Void> deleteLike(@RequestParam("Id") String id,
                            @RequestHeader("Authorization") String token) {
-        Video video = videoRepository.findVideoByIdentifier(id);
-        UserDataBase user = userRepository.findByToken(token);
-        LikedVideo likedVideo = likedVideoRepository.findByUserAndVideo(user, video);
-        if (likedVideo != null) {
-            video.decreaseCountLike();
-
-            likedVideoRepository.delete(likedVideo);
-           return ResponseEntity.ok("Success");
-        }
-        return ResponseEntity.badRequest().build();
+        likedVideoService.deleteFromLikedVideos(token, id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/watch")

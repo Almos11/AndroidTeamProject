@@ -107,4 +107,18 @@ public class UserDataBase {
     public void setCount_likes(Integer count_likes) {
         this.count_likes = count_likes;
     }
+
+    public void decreaseCount_likes() {
+        this.count_likes--;
+    }
+
+    public void increaseCount_likes() {
+        this.count_likes++;
+    }
+    public void decreaseCount_videos() {
+        this.count_videos--;
+    }
+    public void increaseCount_videos() {
+        this.count_videos++;
+    }
 }

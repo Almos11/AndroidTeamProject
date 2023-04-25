@@ -25,6 +25,7 @@ public class ViewService {
         View view = new View();
         UserDataBase user = userRepository.findByToken(userToken);
         Video video = videoRepository.findVideoByIdentifier(videoId);
+        video.increaseCountViews();
         view.setUser(user);
         view.setVideo(video);
         view.setViewDate(new Date());

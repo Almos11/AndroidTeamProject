@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.models.UserDataBase;
 import com.example.demo.repo.UserRepository;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
     public boolean isUsernameTaken(String username) {
         return userRepository.findByUsername(username) != null;
     }
@@ -37,5 +39,15 @@ public class UserService {
         user.setToken(token);
         userRepository.save(user);
         return token;
+    }
+
+    public boolean addNewUser(ObjectNode objectNode) {
+        String username = objectNode.get("username").asText();
+        String password = objectNode.get("password").asText();
+        if (this.isUsernameTaken(username)) {
+            return false;
+        }
+        this.generateUser(username, password);
+        return true;
     }
 }

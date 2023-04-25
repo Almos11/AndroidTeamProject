@@ -51,7 +51,6 @@ public class VideoService {
             video.setUser(user);
             video.setIdentifier(identifier);
             video.setRating();
-            video.setCountDislike();
             video.setCountLike();
             video.setAuthor(user.getUsername());
             video.setViews();
