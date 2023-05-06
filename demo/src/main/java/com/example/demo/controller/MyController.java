@@ -77,12 +77,7 @@ public class MyController {
     @GetMapping("/download")
     public ResponseEntity<byte[]> downloadVideo(@RequestParam("Id") String id) {
         byte[] data = videoRepository.findVideoByIdentifier(id).getData();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDisposition(ContentDisposition.builder("inline").
-                filename("video.mp4").build());
-
-        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+        return ResponseEntity.ok(data);
     }
 
     @GetMapping("/like")
