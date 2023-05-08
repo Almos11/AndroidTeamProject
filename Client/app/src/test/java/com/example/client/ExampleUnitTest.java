@@ -1,4 +1,4 @@
-package com.example.mysecondtestproject;
+package com.example.client;
 
 import org.junit.Test;
 

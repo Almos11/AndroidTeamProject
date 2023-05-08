@@ -1,6 +1,3 @@
 <resources>
-    <string name="app_name">My second testproject</string>
-    <string name="button_enter">Enter</string>
-    <string name="login">Login</string>
-    <string name="password">Password</string>
+    <string name="app_name">Client</string>
 </resources>

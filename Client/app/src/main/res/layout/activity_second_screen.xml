@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SecondScreen">
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="156dp"
-        android:layout_marginTop="396dp"
-        android:onClick="nextScreen"
-        android:text="Next screen"
+        android:id="@+id/button2"
+        android:layout_width="184dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="356dp"
+        android:onClick="goBack"
+        android:text="return"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
