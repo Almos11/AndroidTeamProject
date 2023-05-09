@@ -16,4 +16,16 @@
         android:text="Next screen"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="107dp"
+        android:layout_height="73dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="248dp"
+        android:onClick="runVideo"
+        android:text="Play"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
