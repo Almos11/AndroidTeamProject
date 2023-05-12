@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
@@ -33,10 +38,10 @@
         android:id="@+id/videoView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewPager" />
 
 
     <Button
@@ -45,7 +50,7 @@
         android:layout_height="67dp"
         android:layout_marginStart="48dp"
         android:layout_marginTop="36dp"
-        android:onClick="runVideoURL"
+        android:onClick="trySwipe"
         android:text="play url"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

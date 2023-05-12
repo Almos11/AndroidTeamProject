@@ -1,19 +1,14 @@
 package com.example.client;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.VideoView;
-
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +27,12 @@ public class MainActivity extends AppCompatActivity {
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video1;
         VideoView videoView = findViewById(R.id.videoView);
         videoView.setVideoPath(videoPath);
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                videoView.start();
+            }
+        });
         videoView.start();
     }
 
@@ -39,8 +40,32 @@ public class MainActivity extends AppCompatActivity {
         String videoUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
         VideoView videoView = findViewById(R.id.videoView);
         videoView.setVideoURI(Uri.parse(videoUrl));
+
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                videoView.start();
+            }
+        });
+
         videoView.start();
     }
+
+    public void trySwipe(View view) {
+         String[] videoPaths = {
+                "android.resource://" + getPackageName() + "/" + R.raw.video1,
+                "android.resource://" + getPackageName() + "/" + R.raw.video2,
+                "android.resource://" + getPackageName() + "/" + R.raw.video3,
+                 "android.resource://" + getPackageName() + "/" + R.raw.video4,
+                 "android.resource://" + getPackageName() + "/" + R.raw.video5,
+                 "android.resource://" + getPackageName() + "/" + R.raw.video6,
+        };
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        VideoAdapter videoAdapter = new VideoAdapter(videoPaths); // videoPaths - массив путей к видео
+        viewPager.setAdapter(videoAdapter);
+
+    }
+
 
 
 
