@@ -15,7 +15,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void enter(View v) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, UploadVideo.class);
         startActivity(intent);
     }
 }

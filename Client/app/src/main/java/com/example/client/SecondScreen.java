@@ -14,8 +14,8 @@ public class SecondScreen extends AppCompatActivity {
         setContentView(R.layout.activity_second_screen);
     }
 
-    public void goBack(View v) {
-        Intent intent = new Intent(this, MainActivity.class);
+    public void goNext(View v) {
+        Intent intent = new Intent(this, UploadVideo.class);
         startActivity(intent);
     }
 }
