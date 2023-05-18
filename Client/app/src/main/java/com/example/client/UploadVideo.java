@@ -62,8 +62,8 @@ public class UploadVideo extends AppCompatActivity {
     }
 
     private void uploadToServer(InputStream inputStream) {
-        String url = "http://localhost:8080/upload";
-        String token = "2f3d88c5-7b67-4422-bc81-eb5417cf5d3e";
+        String url = "http://192.168.1.112:8080/upload";
+        String token = "accd3cc4-1c02-415d-8679-b6854aebf31e";
 
         try {
             URL serverUrl = new URL(url);
