@@ -7,17 +7,33 @@ import androidx.core.app.NotificationManagerCompat;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.TextView;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class UploadVideo extends AppCompatActivity {
 
@@ -28,6 +44,7 @@ public class UploadVideo extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1;
     private static final int NOTIFICATION_ID = 1;
+    private TextView tvSelectedVideo;
 
 
     @Override
@@ -44,59 +61,60 @@ public class UploadVideo extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             Uri videoUri = data.getData();
+            uploadVideoToServer(videoUri);
+        }
+    }
 
+
+    private void uploadVideoToServer(Uri videoUri) {
+        OkHttpClient client = new OkHttpClient();
+        AsyncTask.execute(() -> {
             try {
                 InputStream inputStream = getContentResolver().openInputStream(videoUri);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-                // Отправка файла на сервер
-                uploadToServer(inputStream);
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    byteArrayOutputStream.write(buffer, 0, bytesRead);
+                }
+
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("file", "video.mp4",
+                                RequestBody.create(MediaType.parse("video/*"), byteArrayOutputStream.toByteArray()))
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("http://192.168.1.106:8080/upload")
+                        .header("Authorization", "66f5cc5f-bb47-4950-99ba-b8d5e795acea")
+                        .post(requestBody)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    String id = response.body().string();
+                    // Обработка успешного ответа от сервера
+                } else {
+                    // Обработка неуспешного ответа от сервера
+                }
+
+                inputStream.close();
+                byteArrayOutputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                // Обработка ошибки
             }
-        }
+        });
     }
 
-    private void uploadToServer(InputStream inputStream) {
-        String url = "http://192.168.1.112:8080/upload";
-        String token = "accd3cc4-1c02-415d-8679-b6854aebf31e";
 
-        try {
-            URL serverUrl = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", token);
 
-            OutputStream outputStream = connection.getOutputStream();
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            outputStream.flush();
-            inputStream.close();
-            outputStream.close();
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                // Видео успешно загружено на сервер
-                // Обработайте ответ от сервера, если необходимо
-                showNotification("Успех!", "Видео успешно загружено на сервер");
-            } else {
-                // Обработка ошибки при загрузке видео на сервер
-                showNotification("Ошибка!", "Ошибка при загрузке видео на сервер");
-            }
-
-            connection.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private void showNotification(String title, String message) {
