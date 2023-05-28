@@ -4,53 +4,60 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class VideoView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.video_view);
+        playVideo();
     }
 
-    public void nextScreen(View v) {
-        Intent intent = new Intent(this, UserInfo.class);
-        startActivity(intent);
-    }
+    public void addLike(View v) {
+        OkHttpClient client = new OkHttpClient();
+        String url = "http://192.168.1.106:8080/like?Id=идентификатор";
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "токен")
+                .build();
 
-    public void runVideo(View view) {
-        String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video1;
-        android.widget.VideoView videoView = findViewById(R.id.videoView);
-        videoView.setVideoPath(videoPath);
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                videoView.start();
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Button likeButton = findViewById(R.id.likeButton);
+                            likeButton.setBackgroundColor(Color.GRAY);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, java.io.IOException e) {
+                // Обработка ошибки
+                e.printStackTrace();
             }
         });
-        videoView.start();
     }
 
-    public void runVideoURL(View view) {
-        String videoUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-        android.widget.VideoView videoView = findViewById(R.id.videoView);
-        videoView.setVideoURI(Uri.parse(videoUrl));
 
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                videoView.start();
-            }
-        });
-
-        videoView.start();
-    }
-
-    public void trySwipe(View view) {
+    public void playVideo() {
          String[] videoPaths = {
                 "android.resource://" + getPackageName() + "/" + R.raw.video1,
                 "android.resource://" + getPackageName() + "/" + R.raw.video2,
