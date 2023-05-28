@@ -8,9 +8,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.VideoView;
 
-public class MainActivity extends AppCompatActivity {
+public class VideoView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,13 +18,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextScreen(View v) {
-        Intent intent = new Intent(this, SecondScreen.class);
+        Intent intent = new Intent(this, UserInfo.class);
         startActivity(intent);
     }
 
     public void runVideo(View view) {
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video1;
-        VideoView videoView = findViewById(R.id.videoView);
+        android.widget.VideoView videoView = findViewById(R.id.videoView);
         videoView.setVideoPath(videoPath);
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void runVideoURL(View view) {
         String videoUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-        VideoView videoView = findViewById(R.id.videoView);
+        android.widget.VideoView videoView = findViewById(R.id.videoView);
         videoView.setVideoURI(Uri.parse(videoUrl));
 
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

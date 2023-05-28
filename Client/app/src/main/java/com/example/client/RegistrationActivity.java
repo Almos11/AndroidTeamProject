@@ -92,7 +92,7 @@ public class RegistrationActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             if (response != null) {
                 Toast.makeText(RegistrationActivity.this, "Вход успешен", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                Intent intent = new Intent(RegistrationActivity.this, VideoView.class);
                 startActivity(intent);
             } else {
                 Toast.makeText(RegistrationActivity.this, "Ошибка входа", Toast.LENGTH_SHORT).show();
