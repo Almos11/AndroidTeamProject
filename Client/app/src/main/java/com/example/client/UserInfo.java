@@ -26,7 +26,7 @@ public class UserInfo extends AppCompatActivity {
         setContentView(R.layout.user_info);
 
         client = new OkHttpClient();
-        String BASE_URL = "http://192.168.1.104:8080/getUserInfo";
+        String BASE_URL = "http://192.168.1.102:8080/getUserInfo";
         long user_id = 123;
 
         Request request = new Request.Builder()

@@ -28,7 +28,7 @@ public class VideoView extends AppCompatActivity {
 
     public void addLike(View v) {
         OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.1.106:8080/like?Id=идентификатор";
+        String url = "http://192.168.1.102:8080/like?Id=идентификатор";
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", "токен")

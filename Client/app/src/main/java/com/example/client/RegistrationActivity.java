@@ -24,133 +24,97 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class RegistrationActivity extends AppCompatActivity {
-    final String address = "http://192.168.1.104:8080/register";
+    String address = "http://192.168.1.102:8080/";
     String username;
     String password;
 
-    String token;
+    String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
     }
 
-    void getNameAndPassword() {
+    JSONObject getNameAndPassword() {
         EditText loginEditText = findViewById(R.id.loginEditText);
         EditText passwordEditText = findViewById(R.id.passwordEditText);
 
         username = loginEditText.getText().toString();
         password = passwordEditText.getText().toString();
-    }
-    public void sendDataToServerLogin(View v) throws UnsupportedEncodingException {
-        getNameAndPassword();
-        String urlParameters = "username=" + URLEncoder.encode(username, "UTF-8") +
-                "&password=" + URLEncoder.encode(password, "UTF-8");
-
-        new SendLoginRequestTask().execute(address, urlParameters);
-    }
-
-    private class SendLoginRequestTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            String endpoint = params[0];
-            String urlParameters = params[1];
-
-            HttpURLConnection connection = null;
-            try {
-                // Create connection
-                URL url = new URL(endpoint + "?" + urlParameters);
-                connection = (HttpURLConnection) url.openConnection();
-
-                // Set request method
-                connection.setRequestMethod("GET");
-
-                // Get the response
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                reader.close();
-                token = response.toString();
-                return token;
-            } catch (IOException e) {
-                Log.e("SendLoginRequest", "Error sending login request", e);
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            if (response != null) {
-                Toast.makeText(RegistrationActivity.this, "Вход успешен", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(RegistrationActivity.this, VideoView.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(RegistrationActivity.this, "Ошибка входа", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-
-    public void sendDataToServerRegister(View v) {
-        getNameAndPassword();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("login", username);
+            jsonObject.put("username", username);
             jsonObject.put("password", password);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return jsonObject;
 
-        new RegisterTask().execute(jsonObject.toString());
     }
 
-    private class RegisterTask extends AsyncTask<String, Void, Boolean> {
-        @Override
-        protected Boolean doInBackground(String... params) {
-            HttpURLConnection urlConnection = null;
-            try {
-                URL url = new URL(address);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type", "application/json");
-                urlConnection.setDoOutput(true);
+    public void sendDataToServerLogin(View v) throws UnsupportedEncodingException {
+        sendDataToServer("login");
+    }
+    public void sendDataToServerRegister(View v) throws UnsupportedEncodingException {
+        sendDataToServer("register");
+    }
 
-                OutputStream outputStream = urlConnection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-                writer.write(params[0]);
-                writer.flush();
-                writer.close();
-                outputStream.close();
 
-                int responseCode = urlConnection.getResponseCode();
-                return responseCode == HttpURLConnection.HTTP_OK;
-            } catch (IOException e) {
+    public void sendDataToServer(String name_endpoint) throws UnsupportedEncodingException {
+        JSONObject jsonObject = getNameAndPassword();
+        String json = jsonObject.toString();
+        address += name_endpoint;
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(address)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(RegistrationActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    token = response.body().string();
+
+                    // Обработка ответа сервера в UI-потоке
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RegistrationActivity.this, "SUCCESS" + token, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    // Обработка ошибки сервера
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RegistrationActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                Toast.makeText(RegistrationActivity.this, "Регистрация успешна. Теперь снова введите данные для входа", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(RegistrationActivity.this, "Ошибка регистрации", Toast.LENGTH_SHORT).show();
-            }
-        }
+        });
     }
 }
