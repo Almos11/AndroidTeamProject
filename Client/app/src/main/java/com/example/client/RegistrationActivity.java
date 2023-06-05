@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,11 +34,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class RegistrationActivity extends AppCompatActivity {
-    String address = "http://192.168.1.102:8080/";
+    static String ADDRESS = "http://192.168.1.102:8080/";
+
     String username;
     String password;
 
-    String token = "";
+    static String token = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +74,7 @@ public class RegistrationActivity extends AppCompatActivity {
     public void sendDataToServer(String name_endpoint) throws UnsupportedEncodingException {
         JSONObject jsonObject = getNameAndPassword();
         String json = jsonObject.toString();
-        address += name_endpoint;
+        String address = ADDRESS + name_endpoint;
 
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
@@ -102,7 +104,15 @@ public class RegistrationActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(RegistrationActivity.this, "SUCCESS" + token, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegistrationActivity.this, "SUCCESS", Toast.LENGTH_SHORT).show();
+                            if (!Objects.equals(token, "")) {
+                                /*Intent intent = new Intent(RegistrationActivity.this, VideoView.class);
+                                startActivity(intent);
+                                finish();*/
+                                Intent intent = new Intent(RegistrationActivity.this, UserInfo.class);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                     });
                 } else {

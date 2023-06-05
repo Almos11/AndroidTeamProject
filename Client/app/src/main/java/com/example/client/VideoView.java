@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -19,6 +20,8 @@ import okhttp3.Response;
 
 public class VideoView extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +30,15 @@ public class VideoView extends AppCompatActivity {
     }
 
     public void addLike(View v) {
+        String address = RegistrationActivity.ADDRESS;
+        String token = RegistrationActivity.token;
+        String endpoint = "like";
         OkHttpClient client = new OkHttpClient();
-        String url = "http://192.168.1.102:8080/like?Id=идентификатор";
+        String url = address + endpoint + "?Id=" + token;
+        //String url = "http://192.168.1.102:8080/like?Id=идентификатор";
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "токен")
+                .header("Authorization", token)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -41,6 +48,7 @@ public class VideoView extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Toast.makeText(VideoView.this, "SUCCESS", Toast.LENGTH_SHORT).show();
                             Button likeButton = findViewById(R.id.likeButton);
                             likeButton.setBackgroundColor(Color.GRAY);
                         }
@@ -52,6 +60,7 @@ public class VideoView extends AppCompatActivity {
             public void onFailure(Call call, java.io.IOException e) {
                 // Обработка ошибки
                 e.printStackTrace();
+                Toast.makeText(VideoView.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
     }

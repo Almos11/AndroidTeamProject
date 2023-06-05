@@ -26,11 +26,11 @@ public class UserInfo extends AppCompatActivity {
         setContentView(R.layout.user_info);
 
         client = new OkHttpClient();
-        String BASE_URL = "http://192.168.1.102:8080/getUserInfo";
-        long user_id = 123;
+       // String BASE_URL = RegistrationActivity.ADDRESS + "getUserInfo";
 
         Request request = new Request.Builder()
-                .url(BASE_URL + "/getUserInfo?user_id=" + user_id)
+                .url(RegistrationActivity.ADDRESS + "getUserInfo?token=" + RegistrationActivity.token)
+                .header("Authorization", RegistrationActivity.token)
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -55,10 +55,8 @@ public class UserInfo extends AppCompatActivity {
     private void displayUserInfo(String userInfoJson) {
         Gson gson = new Gson();
 
-        // Разберите JSON-ответ и преобразуйте его в объект UserData
         UserData userData = gson.fromJson(userInfoJson, UserData.class);
 
-        // Выведите значения полей на экран
         TextView idTextView = findViewById(R.id.idTextView);
         idTextView.setText(String.valueOf(userData.getId()));
 

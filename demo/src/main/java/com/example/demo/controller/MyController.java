@@ -44,9 +44,10 @@ public class MyController {
     @Autowired
     private UserDataService userDataService;
 
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestParam("username") String username,
-                                        @RequestParam("password") String password) {
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody ObjectNode objectNode) {
+        String username = objectNode.get("username").asText();
+        String password = objectNode.get("password").asText();
         String token = userService.checkUser(username, password);
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -140,9 +141,9 @@ public class MyController {
     }
     @GetMapping("/getUserInfo")
     @ResponseBody
-    public ResponseEntity<String> getUserInfo(@RequestParam("user_id") Long user_id)
+    public ResponseEntity<String> getUserInfo(@RequestParam("token") String token)
             throws JsonProcessingException {
-        String info = userDataService.setupJsonFormatUserData(user_id);
+        String info = userDataService.setupJsonFormatUserData(token);
         return ResponseEntity.ok((info));
     }
     @GetMapping("/description")
