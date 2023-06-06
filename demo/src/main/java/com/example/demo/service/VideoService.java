@@ -45,6 +45,7 @@ public class VideoService {
             if (videoRepository.findVideoByIdentifier(identifier) != null) {
                 return null;
             }
+            user.increaseCount_videos();
             video.setContentType(null);
             video.setData(videoData);
             video.setName(videoName);

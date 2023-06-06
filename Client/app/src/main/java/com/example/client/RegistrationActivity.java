@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class RegistrationActivity extends AppCompatActivity {
-    static String ADDRESS = "http://192.168.1.102:8080/";
+    static String ADDRESS = "http://192.168.1.101:8080/";
 
     String username;
     String password;

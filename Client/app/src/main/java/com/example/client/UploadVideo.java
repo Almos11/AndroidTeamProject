@@ -25,7 +25,7 @@ import okhttp3.Response;
 public class UploadVideo extends AppCompatActivity {
 
     public void goBack(View v) {
-        Intent intent = new Intent(this, VideoView.class);
+        Intent intent = new Intent(this, TestVideoFromServer.class);
         startActivity(intent);
     }
 
