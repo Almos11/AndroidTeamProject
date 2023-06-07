@@ -3,7 +3,6 @@ package com.example.client;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -18,7 +18,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class VideoView extends AppCompatActivity {
+public class MyVideoView extends AppCompatActivity {
 
 
 
@@ -48,7 +48,7 @@ public class VideoView extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VideoView.this, "SUCCESS", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyVideoView.this, "SUCCESS", Toast.LENGTH_SHORT).show();
                             Button likeButton = findViewById(R.id.likeButton);
                             likeButton.setBackgroundColor(Color.GRAY);
                         }
@@ -60,14 +60,14 @@ public class VideoView extends AppCompatActivity {
             public void onFailure(Call call, java.io.IOException e) {
                 // Обработка ошибки
                 e.printStackTrace();
-                Toast.makeText(VideoView.this, "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyVideoView.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
     public void playVideo() {
-         String[] videoPaths = {
+         /*String[] videoPaths = {
                 "android.resource://" + getPackageName() + "/" + R.raw.video1,
                 "android.resource://" + getPackageName() + "/" + R.raw.video2,
                 "android.resource://" + getPackageName() + "/" + R.raw.video3,
@@ -78,6 +78,12 @@ public class VideoView extends AppCompatActivity {
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         VideoAdapter videoAdapter = new VideoAdapter(videoPaths); // videoPaths - массив путей к видео
         viewPager.setAdapter(videoAdapter);
+        ArrayList<String> videoPaths = new ArrayList<>();
+        videoPaths.add("android.resource://" + getPackageName() + "/" + R.raw.video1);
+        videoPaths.add("android.resource://" + getPackageName() + "/" + R.raw.video2);
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        VideoAdapterTest videoAdapterTest = new VideoAdapterTest(videoPaths); // videoPaths - массив путей к видео
+        viewPager.setAdapter(videoAdapterTest);*/
 
     }
 

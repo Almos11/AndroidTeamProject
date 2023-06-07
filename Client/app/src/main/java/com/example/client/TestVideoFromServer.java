@@ -1,6 +1,7 @@
 package com.example.client;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +14,7 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -26,15 +28,18 @@ import android.widget.VideoView;
 
 public class TestVideoFromServer extends AppCompatActivity {
 
+    final static String token = "a81d8233-4c17-40cc-9b73-d7644841429a";
+    ArrayList<File> videoFiles;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_video_from_server);
+        videoFiles = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
                 .url(RegistrationActivity.ADDRESS + "nextVideo")
-                .header("Authorization", "10d79774-a817-438a-83f0-c95d7622569a")
+                .header("Authorization", token)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -51,7 +56,7 @@ public class TestVideoFromServer extends AppCompatActivity {
                         String jsonData = responseBody.string();
                         Gson gson = new Gson();
                         VideoData videoData = gson.fromJson(jsonData, VideoData.class);
-                        sendDownloadRequest(videoData.getId());
+                        sendDownloadRequest(videoData.getId(), videoFiles);
                     }
                 } else {
                     // Обработка неуспешного ответа от сервера
@@ -59,14 +64,15 @@ public class TestVideoFromServer extends AppCompatActivity {
                 response.close();
             }
         });
+        startPlayVideos(videoFiles);
     }
-    public void sendDownloadRequest(String id) {
+    public void sendDownloadRequest(String id, ArrayList<File> videoFiles) {
         OkHttpClient client = new OkHttpClient();
 
         String url = RegistrationActivity.ADDRESS + "download?Id=" + id;
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "10d79774-a817-438a-83f0-c95d7622569a")
+                .header("Authorization", token)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -86,14 +92,15 @@ public class TestVideoFromServer extends AppCompatActivity {
 
 
                         File videoFile = saveVideoToFile(data);
+                         //videoFiles.add(videoFile);
 
                         // Воспроизведение видео на экране
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                VideoView videoView = findViewById(R.id.videoView); // Замените videoView на ID вашего VideoView
-                                videoView.setVideoURI(Uri.fromFile(videoFile));
-                                videoView.start();
+                                ArrayList<File> videos = new ArrayList<>();
+                                videos.add(videoFile);
+                                startPlayVideos(videos);
                             }
                         });
                     }
@@ -103,6 +110,12 @@ public class TestVideoFromServer extends AppCompatActivity {
                 response.close();
             }
         });
+    }
+
+    void startPlayVideos(ArrayList<File> videoFiles) {
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        VideoAdapterTest videoAdapterTest = new VideoAdapterTest(videoFiles);
+        viewPager.setAdapter(videoAdapterTest);
     }
 
     private File saveVideoToFile(byte[] data) throws IOException {

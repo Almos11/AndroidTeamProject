@@ -52,9 +52,8 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".VideoView"
-            android:exported="false">
-
+            android:name=".MyVideoView"
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
