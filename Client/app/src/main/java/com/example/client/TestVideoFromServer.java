@@ -4,15 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Base64;
 import android.widget.MediaController;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -28,13 +25,18 @@ import android.widget.VideoView;
 
 public class TestVideoFromServer extends AppCompatActivity {
 
-    final static String token = "a81d8233-4c17-40cc-9b73-d7644841429a";
-    ArrayList<File> videoFiles;
+    final static String token = "60c0004f-511a-4a99-be5b-85d606a873c1";
+    ArrayList<byte[]> videoBytes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_video_from_server);
-        videoFiles = new ArrayList<>();
+        videoBytes = new ArrayList<>();
+        getNextVideo();
+        //startPlayVideos(videoBytes);
+    }
+
+    public void getNextVideo() {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -56,7 +58,7 @@ public class TestVideoFromServer extends AppCompatActivity {
                         String jsonData = responseBody.string();
                         Gson gson = new Gson();
                         VideoData videoData = gson.fromJson(jsonData, VideoData.class);
-                        sendDownloadRequest(videoData.getId(), videoFiles);
+                        sendDownloadRequest(videoData.getId());
                     }
                 } else {
                     // Обработка неуспешного ответа от сервера
@@ -64,9 +66,9 @@ public class TestVideoFromServer extends AppCompatActivity {
                 response.close();
             }
         });
-        startPlayVideos(videoFiles);
     }
-    public void sendDownloadRequest(String id, ArrayList<File> videoFiles) {
+
+    public void sendDownloadRequest(String id) {
         OkHttpClient client = new OkHttpClient();
 
         String url = RegistrationActivity.ADDRESS + "download?Id=" + id;
@@ -89,18 +91,17 @@ public class TestVideoFromServer extends AppCompatActivity {
                     ResponseBody responseBody = response.body();
                     if (responseBody != null) {
                         byte[] data = responseBody.bytes();
-
-
-                        File videoFile = saveVideoToFile(data);
-                         //videoFiles.add(videoFile);
+                        videoBytes.add(data);
 
                         // Воспроизведение видео на экране
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ArrayList<File> videos = new ArrayList<>();
-                                videos.add(videoFile);
-                                startPlayVideos(videos);
+
+                                //startPlayVideos(videoBytes);
+                                ViewPager2 viewPager = findViewById(R.id.viewPager);
+                                VideoAdapterTest videoAdapterTest = new VideoAdapterTest(videoBytes);
+                                viewPager.setAdapter(videoAdapterTest);
                             }
                         });
                     }
@@ -112,22 +113,9 @@ public class TestVideoFromServer extends AppCompatActivity {
         });
     }
 
-    void startPlayVideos(ArrayList<File> videoFiles) {
+    void startPlayVideos(ArrayList<byte[]> videoBytes) {
         ViewPager2 viewPager = findViewById(R.id.viewPager);
-        VideoAdapterTest videoAdapterTest = new VideoAdapterTest(videoFiles);
+        VideoAdapterTest videoAdapterTest = new VideoAdapterTest(videoBytes);
         viewPager.setAdapter(videoAdapterTest);
     }
-
-    private File saveVideoToFile(byte[] data) throws IOException {
-        File videoFile = new File(getExternalFilesDir(null), "tempVideo.mp4");
-
-        FileOutputStream fos = new FileOutputStream(videoFile);
-        fos.write(data);
-        fos.flush();
-        fos.close();
-
-        return videoFile;
-    }
-
-
 }
