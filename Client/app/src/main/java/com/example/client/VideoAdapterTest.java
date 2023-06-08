@@ -10,16 +10,27 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 
 public class VideoAdapterTest extends RecyclerView.Adapter<VideoAdapterTest.VideoViewHolder> {
-    private ArrayList<byte[]> videoBytes;
+    private final ArrayList<File> videos;
 
-    public VideoAdapterTest(ArrayList<byte[]> videoBytes) {
-        this.videoBytes = videoBytes;
+    TestVideoFromServer testVideoFromServer;
+
+    public VideoAdapterTest(TestVideoFromServer testVideoFromServer) {
+
+        this.videos = new ArrayList<>();
+        this.testVideoFromServer = testVideoFromServer;
+        testVideoFromServer.getNextVideo(new TestVideoFromServer.FileCallback() {
+            @Override
+            public void onFileReceived(File videoFile) {
+                videos.add(videoFile);
+            }
+        });
     }
+
+
 
     @NonNull
     @Override
@@ -30,13 +41,20 @@ public class VideoAdapterTest extends RecyclerView.Adapter<VideoAdapterTest.Vide
 
     @Override
     public void onBindViewHolder(@NonNull VideoAdapterTest.VideoViewHolder holder, int position) {
-        byte[] videoData = videoBytes.get(position);
-        holder.bindVideo(videoData);
+        File videoPath = videos.get(position);
+        testVideoFromServer.getNextVideo(new TestVideoFromServer.FileCallback() {
+            @Override
+            public void onFileReceived(File videoFile) {
+                videos.add(videoFile);
+
+            }
+        });
+        holder.bindVideo(videoPath);
     }
 
     @Override
     public int getItemCount() {
-        return videoBytes.size();
+        return videos.size();
     }
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
@@ -48,18 +66,8 @@ public class VideoAdapterTest extends RecyclerView.Adapter<VideoAdapterTest.Vide
             videoView = itemView.findViewById(R.id.videoView);
         }
 
-        public void bindVideo(byte[] videoData) {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(videoData);
-            videoView.setVideoURI(null);
-            videoView.setVideoPath("");
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                    mediaPlayer.setLooping(true);
-                    mediaPlayer.start();
-                }
-            });
-            videoView.requestFocus();
+        public void bindVideo(File video) {
+            videoView.setVideoURI(Uri.fromFile(video));
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
