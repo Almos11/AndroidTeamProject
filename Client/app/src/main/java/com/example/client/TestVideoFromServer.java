@@ -21,7 +21,7 @@ import okhttp3.ResponseBody;
 
 public class TestVideoFromServer extends AppCompatActivity {
 
-    final static String token = "60c0004f-511a-4a99-be5b-85d606a873c1";
+    final static String token = "aff4f189-7ea6-4a16-8b9a-05949c942ff7";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
