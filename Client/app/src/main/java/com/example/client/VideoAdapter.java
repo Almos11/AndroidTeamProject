@@ -1,11 +1,9 @@
 package com.example.client;
 
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,12 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.ArrayList;
 
-public class VideoAdapterTest extends RecyclerView.Adapter<VideoAdapterTest.VideoViewHolder> {
+public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
     private final ArrayList<File> videos;
 
-    TestVideoFromServer testVideoFromServer;
+    VideoView testVideoFromServer;
 
-    public VideoAdapterTest(TestVideoFromServer testVideoFromServer) {
+    public VideoAdapter(VideoView testVideoFromServer) {
         this.videos = new ArrayList<>();
         this.testVideoFromServer = testVideoFromServer;
     }
@@ -27,18 +25,18 @@ public class VideoAdapterTest extends RecyclerView.Adapter<VideoAdapterTest.Vide
 
     @NonNull
     @Override
-    public VideoAdapterTest.VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_test_video_from_server, parent, false);
-        return new VideoAdapterTest.VideoViewHolder(itemView);
+    public VideoAdapter.VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_view, parent, false);
+        return new VideoAdapter.VideoViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoAdapterTest.VideoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VideoAdapter.VideoViewHolder holder, int position) {
         if (position < videos.size()) {
             File videoPath = videos.get(position);
             holder.bindVideo(videoPath);
         } else {
-            testVideoFromServer.getNextVideo(new TestVideoFromServer.FileCallback() {
+            testVideoFromServer.getNextVideo(new VideoView.FileCallback() {
                 @Override
                 public void onFileReceived(File videoFile) {
                     videos.add(videoFile);
@@ -55,7 +53,7 @@ public class VideoAdapterTest extends RecyclerView.Adapter<VideoAdapterTest.Vide
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
 
-        private final VideoView videoView;
+        private final android.widget.VideoView videoView;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);

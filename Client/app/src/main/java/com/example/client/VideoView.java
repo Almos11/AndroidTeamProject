@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -19,13 +18,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class TestVideoFromServer extends AppCompatActivity {
+public class VideoView extends AppCompatActivity {
 
     final static String token = "33a8ee2d-d438-4c30-be5c-2eec45b2204b";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_video_from_server);
+        setContentView(R.layout.video_view);
         startPlayVideos();
 
     }
@@ -107,7 +106,7 @@ public class TestVideoFromServer extends AppCompatActivity {
 
     void startPlayVideos() {
         ViewPager2 viewPager = findViewById(R.id.viewPager);
-        VideoAdapterTest videoAdapterTest = new VideoAdapterTest(this);
+        VideoAdapter videoAdapterTest = new VideoAdapter(this);
         viewPager.setAdapter(videoAdapterTest);
     }
 

@@ -106,10 +106,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         public void run() {
                             Toast.makeText(RegistrationActivity.this, "SUCCESS", Toast.LENGTH_SHORT).show();
                             if (!Objects.equals(token, "")) {
-                                /*Intent intent = new Intent(RegistrationActivity.this, VideoView.class);
-                                startActivity(intent);
-                                finish();*/
-                                Intent intent = new Intent(RegistrationActivity.this, UserInfo.class);
+                                Intent intent = new Intent(RegistrationActivity.this, VideoView.class);
                                 startActivity(intent);
                                 finish();
                             }
