@@ -21,7 +21,7 @@ import okhttp3.ResponseBody;
 
 public class TestVideoFromServer extends AppCompatActivity {
 
-    final static String token = "aff4f189-7ea6-4a16-8b9a-05949c942ff7";
+    final static String token = "33a8ee2d-d438-4c30-be5c-2eec45b2204b";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +30,7 @@ public class TestVideoFromServer extends AppCompatActivity {
 
     }
 
-    public void getNextVideo(FileCallback callback) {
+    public void getNextVideo(FileCallback callback, int number) {
         OkHttpClient client = new OkHttpClient();
         final File[] videoFile = new File[1];
         Request request = new Request.Builder()
@@ -52,7 +52,7 @@ public class TestVideoFromServer extends AppCompatActivity {
                         String jsonData = responseBody.string();
                         Gson gson = new Gson();
                         VideoData videoData = gson.fromJson(jsonData, VideoData.class);
-                        sendDownloadRequest(videoData.getId(), new FileCallback() {
+                        sendDownloadRequest(videoData.getId(), number, new FileCallback() {
                             @Override
                             public void onFileReceived(File videoFile) {
                                 callback.onFileReceived(videoFile);
@@ -67,7 +67,8 @@ public class TestVideoFromServer extends AppCompatActivity {
         });
     }
 
-    public void sendDownloadRequest(String id, FileCallback callback) {
+
+    public void sendDownloadRequest(String id, int number, FileCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
         String url = RegistrationActivity.ADDRESS + "download?Id=" + id;
@@ -90,9 +91,9 @@ public class TestVideoFromServer extends AppCompatActivity {
                     ResponseBody responseBody = response.body();
                     if (responseBody != null) {
                         byte[] data = responseBody.bytes();
-                        videoFile[0] = saveVideoToFile(data);
+                        videoFile[0] = saveVideoToFile(data, number);
                         if (callback != null) {
-                            callback.onFileReceived(videoFile[0]);
+                            runOnUiThread(() -> callback.onFileReceived(videoFile[0]));
                         }
                     }
                 } else {
@@ -110,9 +111,9 @@ public class TestVideoFromServer extends AppCompatActivity {
         viewPager.setAdapter(videoAdapterTest);
     }
 
-    private File saveVideoToFile(byte[] data) throws IOException {
-        File videoFile = new File(getExternalFilesDir(null), "tempVideo.mp4");
-
+    private File saveVideoToFile(byte[] data, int number) throws IOException {
+        String nameVideoFile = "tempVideo" + number +".mp4";
+        File videoFile = new File(getExternalFilesDir(null), nameVideoFile);
         FileOutputStream fos = new FileOutputStream(videoFile);
         fos.write(data);
         fos.flush();

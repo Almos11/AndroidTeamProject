@@ -24,7 +24,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
            "    FROM views " +
            "    WHERE views.video_id = videos.id AND views.user_id = :userId" +
            ")" +
-           "ORDER BY LOG(rating + 1) * RANDOM() DESC LIMIT 1", nativeQuery = true)
+           "ORDER BY LOG(rating + 100) * RANDOM() DESC LIMIT 1", nativeQuery = true)
    String getTopRatedVideoId(@Param("userId") Long userId);
 
 }
