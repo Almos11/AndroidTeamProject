@@ -141,9 +141,9 @@ public class MyController {
     }
     @GetMapping("/getUserInfo")
     @ResponseBody
-    public ResponseEntity<String> getUserInfo(@RequestParam("token") String token)
+    public ResponseEntity<String> getUserInfo(@RequestParam("id") Long id)
             throws JsonProcessingException {
-        String info = userDataService.setupJsonFormatUserData(token);
+        String info = userDataService.setupJsonFormatUserData(id);
         return ResponseEntity.ok((info));
     }
     @GetMapping("/description")

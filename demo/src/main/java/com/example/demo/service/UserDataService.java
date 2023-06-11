@@ -14,8 +14,8 @@ public class UserDataService {
     UserRepository userRepository;
     @Autowired
     ObjectMapper objectMapper;
-    public String setupJsonFormatUserData(String token) throws JsonProcessingException {
-        UserDataBase user = userRepository.findByToken(token);
+    public String setupJsonFormatUserData(Long id) throws JsonProcessingException {
+        UserDataBase user = userRepository.findUserDataBaseById(id);
         UserData userInfo = new UserData();
         userInfo.setDescription(user.getDescription());
         userInfo.setName(user.getUsername());

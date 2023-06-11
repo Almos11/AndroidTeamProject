@@ -18,18 +18,30 @@ import com.google.gson.Gson;
 
 public class UserInfo extends AppCompatActivity {
 
-    private OkHttpClient client;
+    private long id;
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_info);
+    }
 
-        client = new OkHttpClient();
-       // String BASE_URL = RegistrationActivity.ADDRESS + "getUserInfo";
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserInfo(id);
+    }
+
+    private void getUserInfo(long id) {
+        OkHttpClient client = new OkHttpClient();
+
 
         Request request = new Request.Builder()
-                .url(RegistrationActivity.ADDRESS + "getUserInfo?token=" + RegistrationActivity.token)
+                .url(RegistrationActivity.ADDRESS + "getUserInfo?id=" + id)
                 .header("Authorization", RegistrationActivity.token)
                 .build();
         client.newCall(request).enqueue(new Callback() {

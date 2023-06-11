@@ -30,7 +30,7 @@ public class VideoDataService {
         videoData.setRating(video.getRating());
         videoData.setComments(video.getCountComments());
         videoData.setViews(video.getViews());
-        videoData.setAuthor_id("");
+        videoData.setAuthor_id(userDataBase.getId().intValue());
         return objectMapper.writeValueAsString(videoData);
     }
 }

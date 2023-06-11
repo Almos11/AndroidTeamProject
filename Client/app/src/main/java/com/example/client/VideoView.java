@@ -3,7 +3,12 @@ package com.example.client;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -20,7 +25,10 @@ import okhttp3.ResponseBody;
 
 public class VideoView extends AppCompatActivity {
 
-    final static String token = "33a8ee2d-d438-4c30-be5c-2eec45b2204b";
+    final static String token = "bda9f28d-b22a-4f03-a59e-6ce80f84055a";
+    VideoAdapter videoAdapter;
+
+    UserInfo userInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +59,10 @@ public class VideoView extends AppCompatActivity {
                         String jsonData = responseBody.string();
                         Gson gson = new Gson();
                         VideoData videoData = gson.fromJson(jsonData, VideoData.class);
-                        sendDownloadRequest(videoData.getId(), number, new FileCallback() {
+                        sendDownloadRequest(jsonData, videoData.getId(), number, new FileCallback() {
                             @Override
-                            public void onFileReceived(File videoFile) {
-                                callback.onFileReceived(videoFile);
+                            public void onFileReceived(File videoFile, String jsonData) {
+                                callback.onFileReceived(videoFile, jsonData);
                             }
                         });
                     }
@@ -67,7 +75,7 @@ public class VideoView extends AppCompatActivity {
     }
 
 
-    public void sendDownloadRequest(String id, int number, FileCallback callback) {
+    public void sendDownloadRequest(String jsonData, String id, int number, FileCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
         String url = RegistrationActivity.ADDRESS + "download?Id=" + id;
@@ -75,8 +83,6 @@ public class VideoView extends AppCompatActivity {
                 .url(url)
                 .header("Authorization", token)
                 .build();
-
-        final File[] videoFile = new File[1];
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -90,9 +96,9 @@ public class VideoView extends AppCompatActivity {
                     ResponseBody responseBody = response.body();
                     if (responseBody != null) {
                         byte[] data = responseBody.bytes();
-                        videoFile[0] = saveVideoToFile(data, number);
+                        File videoFile = saveVideoToFile(data, number);
                         if (callback != null) {
-                            runOnUiThread(() -> callback.onFileReceived(videoFile[0]));
+                            runOnUiThread(() -> callback.onFileReceived(videoFile, jsonData));
                         }
                     }
                 } else {
@@ -105,9 +111,10 @@ public class VideoView extends AppCompatActivity {
 
 
     void startPlayVideos() {
+        userInfo = new UserInfo();
         ViewPager2 viewPager = findViewById(R.id.viewPager);
-        VideoAdapter videoAdapterTest = new VideoAdapter(this);
-        viewPager.setAdapter(videoAdapterTest);
+        videoAdapter = new VideoAdapter(this);
+        viewPager.setAdapter(videoAdapter);
     }
 
     private File saveVideoToFile(byte[] data, int number) throws IOException {
@@ -121,9 +128,51 @@ public class VideoView extends AppCompatActivity {
         return videoFile;
     }
     public interface FileCallback {
-        void onFileReceived(File videoFile);
+        void onFileReceived(File videoFile, String jsonData);
     }
 
+    public void showUserInfo(View v) {
+        String infoVideo = videoAdapter.currentVideoInfo;
+        Gson gson = new Gson();
+        VideoData videoData = gson.fromJson(infoVideo, VideoData.class);
+        userInfo.setId(videoData.getAuthor_id());
+        Intent intent = new Intent(VideoView.this, UserInfo.class);
+        startActivity(intent);
+    }
 
+    public void addLike(View v) {
+        String infoVideo = videoAdapter.currentVideoInfo;
+        Gson gson = new Gson();
+        VideoData videoData = gson.fromJson(infoVideo, VideoData.class);
+        sendLikeRequest(videoData.getId());
+    }
 
+    private  void sendLikeRequest(String id) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = RegistrationActivity.ADDRESS + "like?Id=" + id;
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", VideoView.token)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Обработка ошибки при отправке запроса
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                // Обработка ответа от сервера
+                if (response.isSuccessful()) {
+                   // Toast.makeText(VideoView.this, "SUCCESS", Toast.LENGTH_SHORT).show();
+                } else {
+                   // Toast.makeText(VideoView.this, "Error", Toast.LENGTH_SHORT).show();
+                }
+                response.close();
+            }
+        });
+    }
 }

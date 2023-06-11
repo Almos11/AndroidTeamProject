@@ -2,7 +2,7 @@ package com.example.client;
 
 public class VideoData {
     String id;
-    String author_id;
+    long author_id;
     String author_name;
     int likes;
     int comments;
@@ -13,7 +13,7 @@ public class VideoData {
         this.id = id;
     }
 
-    public void setAuthor_id(String author_id) {
+    public void setAuthor_id(long author_id) {
         this.author_id = author_id;
     }
 
@@ -41,6 +41,9 @@ public class VideoData {
         return this.id;
     }
 
+    public long getAuthor_id() {
+        return this.author_id;
+    }
     public String getAuthor_name() {
         return this.author_name;
     }

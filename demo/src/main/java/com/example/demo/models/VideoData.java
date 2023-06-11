@@ -1,7 +1,7 @@
 package com.example.demo.models;
 public class VideoData {
     String id;
-    String author_id;
+    int author_id;
     String author_name;
     int likes;
     int comments;
@@ -12,7 +12,7 @@ public class VideoData {
         this.id = id;
     }
 
-    public void setAuthor_id(String author_id) {
+    public void setAuthor_id(int author_id) {
         this.author_id = author_id;
     }
 
