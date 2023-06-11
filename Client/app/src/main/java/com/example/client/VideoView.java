@@ -28,6 +28,8 @@ public class VideoView extends AppCompatActivity {
     final static String token = "bda9f28d-b22a-4f03-a59e-6ce80f84055a";
     VideoAdapter videoAdapter;
 
+    static long currentAuthor_id;
+
     UserInfo userInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +137,8 @@ public class VideoView extends AppCompatActivity {
         String infoVideo = videoAdapter.currentVideoInfo;
         Gson gson = new Gson();
         VideoData videoData = gson.fromJson(infoVideo, VideoData.class);
-        userInfo.setId(videoData.getAuthor_id());
+        currentAuthor_id = videoData.getAuthor_id();
+        //userInfo.setId(videoData.getAuthor_id());
         Intent intent = new Intent(VideoView.this, UserInfo.class);
         startActivity(intent);
     }

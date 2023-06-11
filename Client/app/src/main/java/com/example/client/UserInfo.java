@@ -33,7 +33,7 @@ public class UserInfo extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getUserInfo(id);
+        getUserInfo(VideoView.currentAuthor_id);
     }
 
     private void getUserInfo(long id) {
@@ -42,7 +42,7 @@ public class UserInfo extends AppCompatActivity {
 
         Request request = new Request.Builder()
                 .url(RegistrationActivity.ADDRESS + "getUserInfo?id=" + id)
-                .header("Authorization", RegistrationActivity.token)
+                .header("Authorization", "bda9f28d-b22a-4f03-a59e-6ce80f84055a")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override

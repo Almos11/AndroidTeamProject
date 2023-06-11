@@ -59,4 +59,8 @@ public class VideoData {
     public int getRating() {
         return this.rating;
     }
+
+    public long getAuthor_id() {
+        return this.author_id;
+    }
 }
